@@ -52,7 +52,7 @@ class PrivacyPolicyClassifier:
             total_tokens = len(self.tokenizer.encode(predicted_text))  # Count total tokens in the output
             generated_tokens = self.tokenizer.tokenize(predicted_text[len(prompt):].strip())
         
-            new_tokens = len(generated_tokens)  # Update new_tokens to visible token count
+            new_tokens = len(generated_tokens) 
             generated_text = predicted_text[len(prompt):].strip()  # Extract only the generated portion
             predicted_categories = generated_text.split('Category:')[-1].strip().split(', ')
             print(f"Generated new tokens: {generated_text}")
@@ -89,9 +89,6 @@ class PrivacyPolicyClassifier:
             print(f"Generated new tokens:{generated_text}")
             print(self.tokenizer.tokenize(generated_text))
 
-
-
-        # Print the new tokens and their generation rate
         print(f"Elapsed Time: {elapsed_time}")
         print(f"New tokens generated: {new_tokens}")
         print(f"Tokens generated per second: {tokens_per_second:.2f} tokens/s")

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,138 +7,329 @@
     <title>Chatbot</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href= "{%  static 'css/style.css' %}" rel="stylesheet" type = "text/css">
+    <!-- <script src="{% static 'js/script.js' %}"></script>  -->
     <style>
-
+        *{
+            font-size: 1em !important;
+        }
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 10px 10px;
             background-color: #f5f5f5;
             display: flex;
             height: 100vh;
         }
+        /* .container{
+            max-height: 100%;
+        } */
 
-        /* Sidebar styling */
         .sidebar {
             width: 250px;
+            min-height: fit-content;
             padding: 20px;
             display: flex;
             flex-direction: column;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-        }
-        .sidebar button {
-            margin: 5px;
+            overflow: hidden; /* Ensures content stays inside */
+    }
+
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
         }
 
-        .sidebar h3 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: bold;
+        .card {
+            width: 100%;
+            min-height: 50px;
+            position: relative;
+            perspective: 1000px;
+            transition: all 0.4s ease-in-out;
+            margin-bottom: 5px;
         }
 
-        .chat-container {
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            word-wrap: break-word;
+            position: absolute;
+            backface-visibility: hidden;
+            transition: transform 0.6s ease-in-out;
+        }
+
+
+        /* Back of the card with description */
+        .card-back {
+            transform: rotateY(180deg);
+            padding: 10px;
+        }
+
+        .card:hover {
+            min-height: 120px; 
+            height: auto;
+            padding: 10px;
+        }
+
+        .card:hover .card-front {
+            transform: rotateY(180deg);
+        }
+
+        .card:hover .card-back {
+            transform: rotateY(0deg);
+            position: relative; 
+        }
+
+        .card:nth-child(1) .card-front, .card:nth-child(1) .card-back { 
+            background-color: #FFA07A;             
+            border: 1px solid #FFB085; 
+        } 
+        .card:nth-child(2) .card-front, .card:nth-child(2) .card-back { 
+            background-color: #88B04B; 
+        } 
+        .card:nth-child(3) .card-front, .card:nth-child(3) .card-back { 
+            background-color: #C9B29B;
+         } /* Darker Light Sand */
+        .card:nth-child(4) .card-front, .card:nth-child(4) .card-back { 
+            background-color: #6495ED; 
+        } /* Darker Soft Blue */
+        .card:nth-child(5) .card-front, .card:nth-child(5) .card-back { 
+            background-color: #A187BE; 
+        } /* Darker Lavender */
+        .card:nth-child(6) .card-front, .card:nth-child(6) .card-back { 
+            background-color: #D16D7F;
+         } /* Darker Misty Rose */
+        .card:nth-child(7) .card-front, .card:nth-child(7) .card-back { 
+            background-color: #5DA89B;
+         } /* Darker Pastel Green */
+        .card:nth-child(8) .card-front, .card:nth-child(8) .card-back { 
+            background-color: #9F79B8; 
+        } /* Darker Blush Pink */
+        .card:nth-child(9) .card-front, .card:nth-child(9) .card-back { 
+            background-color: #E0B251; 
+        } /* Darker Creamy Yellow */
+        .card:nth-child(10) .card-front, .card:nth-child(10) .card-back { 
+            background-color: #4FB3BF; 
+        } /* Darker Sky Blue */
+
+        .card-front, .card-back {
+            color: white;  /* Ensures text is readable */
+        }
+
+        .container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: #f9f9f9;
-            border-left: 1px solid #ddd;
+            margin-bottom: 0 !important; /* Remove any extra spacing */
+            padding-bottom: 0 !important;
+        }
+        .chat-container {
+            flex: 1;
+            min-height: 75%;
+            max-height: 100%;
+            font-family: Arial, sans-serif;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);            
         }
 
         .chat-header {
             padding: 15px;
             font-size: 18px;
             font-weight: bold;
+            color: white;
+            background-color: #4A90E2;  /* Softer blue than before */
+            text-align: center;
+            border-top-right-radius: 10px;
+            border-top-left-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #chatbot-container{
+            height: 65vh;
+            overflow-y: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding-bottom: 0px;
         }
 
         .chat-area {
             flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        /* .chat-bubble {
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 15px;
-            max-width: 70%;
-            word-wrap: break-word;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        } */
-
-        /* .user-bubble {
-            background-color: #007bff;
-            color: white;
-            align-self: flex-end;
-        } */
-
-        /* .bot-bubble {
-            background-color: #f1f0f0;
-            color: black;
-            align-self: flex-start;
-        } */
-
-        .input-area {
+            height: 100%;
+            padding: 10px;
             display: flex;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-            background-color: white;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: scroll;
+            flex-direction: column;
         }
 
-        .input-area input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            margin-right: 10px;
-            font-size: 14px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .input-area input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        /* .input-area button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        } */
-
-        /* .input-area button:hover {
-            background-color: #0056b3;
-        } */
-
-        /* Smooth scrolling for chat area */
-        /* .chat-area::-webkit-scrollbar {
+        .chat-area::-webkit-scrollbar {
             width: 8px;
         }
 
         .chat-area::-webkit-scrollbar-thumb {
-            background-color: #ddd;
-            border-radius: 5px;
+            background-color: #000;
+            border-radius: 10px;
         }
 
-        .chat-area::-webkit-scrollbar-thumb:hover {
-            background-color: #bbb;
+        .chat-area::-webkit-scrollbar-track {
+            display: none;
+        }
+
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #D1E8FF; /* Light soft blue */
+            color: #111213; /* Deep navy for contrast */
+            align-self: flex-end; 
+            /* max-width: 80%;  */
+            padding: 10px; 
+            border-radius: 10px; 
+            margin-bottom: 5px; 
+            word-wrap: break-word; 
+            white-space: normal; 
+            overflow: visible; 
+            display: inline-block; 
+            line-height: 1.5;
+        }
+
+        .bot-message {
+            background-color: #E8E8E8;  /* Light pastel gray */
+            color: black;
+            align-self: flex-start;
+        }
+
+        .paraphrased_message {
+            background-color: #4CAF50;
+            color: orange;
+            align-self: flex-start
+        }
+        
+
+        .typed {
+        /* overflow: hidden; */
+        /* white-space: nowrap; */
+        border-right: 2px solid;
+        width: 100%;
+        animation: typing 0.5s steps(30, end) forwards;
+        }
+        
+        @keyframes typing {
+        from { width: 0 }
+        to { width: 100% }
+        }
+
+        /* @keyframes blinking {
+        0% {border-right-color: transparent}
+        50% {border-right-color: black}
+        100% {border-right-color: transparent}
         } */
+
+        .paraphrase{
+            margin: 0 10px;
+        }
+        .typing {
+            width: 5px;
+            height: 5px;
+            background-color: black;
+            display: inline-block;
+            margin: 1px;
+            border-radius: 50%;
+            &:nth-child(1) {
+            animation: bounce 1s infinite;
+            }
+            &:nth-child(2) {
+            animation: bounce 1s infinite .2s;
+            }
+            &:nth-child(3) {
+            animation: bounce 1s infinite .4s;
+            }
+        }
+
+        @keyframes bounce {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(8px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+        }
+
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            /* border-top: 1px solid #ccc; */
+            /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); */
+            border-top: none; /* Remove top border */
+            box-shadow: none; /* Remove any box shadow */
+            margin-top: 0; /* Ensure no gap above */
+        }
+
+        .input-area input{
+            outline: none;
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid rgba(0, 106, 219, 0.982);
+        }
+
+        .input-area input:focus {
+                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.272);
+        }
+
+        /* Side bar css */
+
+        .sidebar {
+            width: 250px;
+            height: fit-content;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar h3 {
+            margin-top: 0;
+            font-weight: bold;
+        }
+
+        .sidebar .btn{
+            margin: 2px 0px;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Sidebar with category buttons -->
-    <div class="sidebar">
+    <div class="sidebar d-flex flex-column">
         <h3>Categories</h3>
-        <button type="button" class="btn btn-primary">First Party Collection/Use</button>
+        <!-- <div class="card-container">
+            <div class="card">
+                <div class="card-front">First Party Collection/Use</div>
+                <div class="card-back">This refers to the collection and use of data by the company or organization that directly interacts with the user.</div>
+            </div>
+        </div>
         <button type="button" class="btn btn-primary">Third Party Sharing/Collection</button>
         <button type="button" class="btn btn-primary">Other</button>
         <button type="button" class="btn btn-primary">User Choice/Control</button>
@@ -147,38 +339,625 @@
         <button type="button" class="btn btn-primary">Policy Change</button>
         <button type="button" class="btn btn-primary">Data Retention</button>
         <button type="button" class="btn btn-primary">User Access, Edit and Deletion</button>
-    </div>
-
-    <!-- Main Chatbot Container -->
-    <div class="chat-container">
-        <div class="chat-header"> 
-            Privacy Policy Text Classifier Using LLM 
-        </div>
-            <div class="chat-area overflow-auto" id="chat-area">
-                <!-- Messages will dynamically appear here -->
-                {% if input %}
-                    Input: {{input}}
-                    Output: {{output}}
-                {% endif%}   
-
+    </div> -->
+    <!-- <div class="sidebar d-flex flex-column"> -->
+        <!-- <h3>Categories</h3> -->
+        <div class="card-container">
+            <div class="card">
+                <div class="card-front">First Party Collection/Use</div>
+                <div class="card-back">This refers to the collection and use of data by the company or organization that directly interacts with the user.</div>
             </div>
-                <div class="container">
-                    <button type="button" class="btn btn-primary"> Paraphrase for 10 year old </button>
-                    <button type="button" class="btn btn-primary"> Paraphrase for 80 year old</button>
-                    <button type="button" class="btn btn-primary"> Paraphrase </button>
-                </div>
-
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="form-control input-area">
-                        <input type="text" name="text" placeholder="Please upload/enter privay policy">
-                        <!-- <div class = "input"> -->
-                        <!-- <i class="fa-paperclip"></i> -->
-                        <!-- </div> -->
-                        <input type="submit" class="btn btn-primary" value = "Submit">
-                    </div>
-                </form>
+            <div class="card">
+                <div class="card-front">Third Party Sharing/Collection</div>
+                <div class="card-back">This occurs when a company shares user data with external organizations or when third parties collect data through a company’s platform, such as advertisers or analytics providers.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">Other</div>
+                <div class="card-back">This category includes data collection and usage practices that do not fall under commonly defined categories, such as archival purposes, research, or legal compliance.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">User Choice/Control</div>
+                <div class="card-back">This refers to the options provided to users that allow them to manage how their data is collected, used, or shared, such as opting out of targeted advertising or adjusting privacy settings.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">Do Not Track</div>
+                <div class="card-back">This is a browser feature that allows users to send a request to websites asking them not to track their online activity, though compliance with this request depends on the website.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">International and Specific Audiences</div>
+                <div class="card-back">This refers to privacy policies designed to comply with regional laws and regulations or tailored for specific user groups, such as children, healthcare patients, or users in the EU under GDPR.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">Data Security</div>
+                <div class="card-back">This involves measures taken by organizations to protect user data from unauthorized access, breaches, loss, or cyberattacks, including encryption, firewalls, and secure authentication.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">Policy Change</div>
+                <div class="card-back">This refers to updates or modifications made to a company's privacy policy, often requiring notification to users to inform them of any changes in how their data is collected, stored, or shared.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">Data Retention</div>
+                <div class="card-back">This defines how long a company stores user data, under what conditions it is retained, and when it is deleted or anonymized, based on business needs or legal requirements.</div>
+            </div>
+            <div class="card">
+                <div class="card-front">User Access, Edit and Deletion</div>
+                <div class="card-back">This refers to users' rights to view, modify, or permanently delete their personal data from a company’s system, ensuring transparency and user control over personal information.</div>
+            </div>
+        </div>
     </div>
+    
 
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header d-flex justify-content-center align-items-center text-center">
+                <span class="fw-bold">Privacy Policy Text Classifier Using LLM  </span>
+                <img src="{% static 'images/uno_logo.png' %}" alt="UNO Logo" style="height: 30px; margin-left: 10px;">
+            </div>
+            <div id="chatbot-container">
+                <div class="chat-area" id="chat-messages">
+                    <div id = "pp_input_area"></div>
+                    <div id = "pp_output_area"></div>
+                </div>
+            </div>
+        </div>
+        <div class="paraphrase_buttons py-1 pr-1 d-flex justify-content-center" style="display: none !important;">
+            <button type="button" class="btn btn-primary paraphrase">Simplify for Kids</button>
+            <button type="button" class="btn btn-primary paraphrase">Simplify for Adults</button>
+            <button type="button" class="btn btn-primary paraphrase">Paraphrase</button>
+            <button type="button" class="btn btn-primary highlight-text">Highlight Categories</button> 
+        </div>        
+        <div class="btn btn-primary">
+            <select class="form-select" id = model_name>
+                <option selected hidden>Choose an LLM</option>                    
+                <option class="dropdown-item" value="Base Line Model - LLaMA 2" >Base Line Model - LLaMA 2</option>
+                <option class="dropdown-item" value = "Fine Tuned Model" >Fine Tuned Model</option>
+                <option class="dropdown-item" value = "Fine Tuned Quantized Model">Fine Tuned Quantized Model</option> 
+            </select>
+        </div>
+        <form class="form-control input-area" id = "form">
+            <input type="text" name="message" id = "privacy_policy_text" placeholder="Please upload/enter privacy policy"/> 
+        </form>
+    </div>
+    <script>
+        let url = `ws://${window.location.host}/ws/socket-server/`
+        const chatSocket = new WebSocket(url)
+
+        let chatMessages = document.getElementById("chat-messages");
+
+        var pp_input = document.getElementById("pp_input_area")
+        var pp_output = document.getElementById("pp_output_area")
+
+        let form = document.getElementById("form");
+        var pp_paraphrase_input = ""
+        var modal_paraphrased_message = document.getElementById("modal_paraphrased_message")
+
+//         document.addEventListener("click", function (event) {
+//         let highlightButton = event.target.closest(".highlight-text");
+
+//         if (highlightButton) {
+//         console.log("🔵 Highlight button clicked!");
+
+//         let botMessage = event.target.closest(".bot-message");
+//         console.log(botMessage)
+//         if (botMessage) {
+
+//         let extractedText = botMessage.innerText.trim();
+//         console.log("📌 Extracted Bot Text (Using innerText):", extractedText);
+        
+
+
+//         let botTextOnly = botMessage.innerHTML.split('<div class="paraphrase_buttons')[0].trim();
+//         let processedText = botTextOnly.replace(/\s+/g, ' ');  // Normalize spacing
+
+//         console.log("📝 Cleaned Bot Message:", processedText);
+
+//         // Define category keywords and their associated colors
+//         let categoryColors = {
+//             "First Party Collection/Use": "#FFDDC1", /* Peach */
+//             "Third Party Sharing/Collection": "#D4E2D4", /* Mint Green */
+//             "Other": "#F5E6CC", /* Light Sand */
+//             "User Choice/Control": "#DDEBF7", /* Soft Blue */
+//             "Do Not Track": "#E1D5E7", /* Lavender */
+//             "International and Specific Audiences": "#FFE4E1", /* Misty Rose */
+//             "Data Security": "#C9E4CA", /* Pastel Green */
+//             "Policy Change": "#FAD2E1", /* Blush Pink */
+//             "Data Retention": "#FAF3DD", /* Creamy Yellow */
+//             "User Access, Edit and Deletion": "#D7E3FC" /* Sky Blue */
+//         };
+
+//         let sentencePattern = /Sentence:\s(.*?)(?=\sCategory:|$)/gs;
+//         let categoryPattern = /Category:\s(.*?)(?=\sSentence:|$)/gs;
+
+//         let sentences = [...processedText.matchAll(sentencePattern)].map(match => match[1].trim());
+//         let categories = [...processedText.matchAll(categoryPattern)].map(match => match[1].trim());
+
+//         console.log("📝 Extracted Sentences:", sentences);
+//         console.log("📌 Extracted Categories:", categories);
+
+
+//         let innerHTML = botMessage.innerHTML;
+
+//         sentences.forEach((sentence, index) => {
+//             let categoryColor = categoryColors[categories[index]] || "yellow"; // Default to yellow
+//             let regex = new RegExp(sentence.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "g"); // Escape special characters
+//             innerHTML = innerHTML.replace(regex, `<span class="highlight" style="background-color: ${categoryColor}; transition: background-color 0.3s ease-in-out;">${sentence}</span>`);
+//         });
+
+//         botMessage.innerHTML = innerHTML;
+//         console.log("✅ Sentences highlighted successfully!");
+//     } else {
+//         console.log("❌ No bot message found!");
+//     }
+// }
+//     });;
+
+// working code
+// document.addEventListener("click", function (event) {
+//     let highlightButton = event.target.closest(".highlight-text");
+
+//     if (highlightButton) {
+//         console.log("🔵 Highlight button clicked!");
+
+//         let botMessage = event.target.closest(".bot-message");
+
+//         if (botMessage) {
+//             let extractedText = botMessage.innerText.trim();
+//             console.log("📌 Extracted Bot Text:", extractedText);
+
+//             let botTextOnly = botMessage.innerHTML.split('<div class="paraphrase_buttons')[0].trim();
+//             let processedText = botTextOnly.replace(/\s+/g, ' ');
+
+//             console.log("📝 Cleaned Bot Message:", processedText);
+
+//             let categoryColors = {
+//                 "First Party Collection/Use": "#FFA07A",
+//                 "Third Party Sharing/Collection": "#88B04B",
+//                 "Other": "#C9B29B",
+//                 "User Choice/Control": "#6495ED",
+//                 "Do Not Track": "#A187BE",
+//                 "International and Specific Audiences": "#D16D7F",
+//                 "Data Security": "#5DA89B",
+//                 "Policy Change": "#9F79B8",
+//                 "Data Retention": "#E0B251",
+//                 "User Access, Edit and Deletion": "#4FB3BF"
+//             };
+
+
+//             let sentencePattern = /Sentence:\s(.*?)(?=\sCategory:|$)/gs;
+//             let categoryPattern = /Category:\s(.*?)(?=\sSentence:|$)/gs;
+
+//             let sentences = [...extractedText.matchAll(sentencePattern)].map(m => m[1].trim());
+//             let categories = [...extractedText.matchAll(categoryPattern)].map(m => m[1].trim());
+
+
+//             console.log("📝 Extracted Sentences:", sentences);
+//             console.log("📌 Extracted Categories:", categories);
+
+//             let innerHTML = botMessage.innerHTML;
+
+//             sentences.forEach((sentence, index) => {
+//                 let categoryColor = categoryColors[categories[index]] || "yellow";
+//                 let regex = new RegExp(sentence.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "g");
+
+//                 innerHTML = innerHTML.replace(regex, `<span class="highlight" style="background-color: transparent; transition: background-color 0.5s ease-in-out;">${sentence}</span>`);
+//             });
+
+//             botMessage.innerHTML = innerHTML;
+
+//             let highlights = botMessage.querySelectorAll(".highlight");
+
+//             highlights.forEach((span, i) => {
+//                 setTimeout(() => {
+//                     span.style.backgroundColor = categoryColors[categories[i]] || "yellow";
+//                 }, i * 1000); // **Adjust this delay (500ms per sentence) for slower effect**
+//             });
+
+//             console.log("✅ Sentences highlighted with delay!");
+//         } else {
+//             console.log("❌ No bot message found!");
+//         }
+//     }
+// });
+
+
+document.addEventListener("click", function (event) {
+    const highlightButton = event.target.closest(".highlight-text");
+
+    if (!highlightButton) return;
+
+    console.log("🔵 Highlight button clicked!");
+
+    const botMessage = event.target.closest(".bot-message");
+    if (!botMessage) {
+        console.log("❌ No bot message found!");
+        return;
+    }
+
+    // ✅ Only take the HTML portion before the buttons
+    const htmlBeforeButtons = botMessage.innerHTML.split('<div class="paraphrase_buttons')[0];
+
+    // ✅ Extract raw text (with tags preserved) to parse sentences/categories cleanly
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = htmlBeforeButtons;
+    const textToParse = tempDiv.innerText.trim();
+
+    console.log("🧼 Cleaned Bot Text:", textToParse);
+
+    const categoryColors = {
+        "First Party Collection/Use": "#FFA07A",
+        "Third Party Sharing/Collection": "#88B04B",
+        "Other": "#C9B29B",
+        "User Choice/Control": "#6495ED",
+        "Do Not Track": "#A187BE",
+        "International and Specific Audiences": "#D16D7F",
+        "Data Security": "#5DA89B",
+        "Policy Change": "#9F79B8",
+        "Data Retention": "#E0B251",
+        "User Access, Edit and Deletion": "#4FB3BF"
+    };
+
+    // ✅ Regex to extract sentence-category pairs
+    const sentencePattern = /Sentence:\s(.*?)(?=\sCategory:|$)/gs;
+    const categoryPattern = /Category:\s(.*?)(?=Sentence:|$)/gs;
+
+    const sentences = [...textToParse.matchAll(sentencePattern)].map(m => m[1].trim());
+    const categories = [...textToParse.matchAll(categoryPattern)].map(m => m[1].trim());
+
+    console.log("📝 Extracted Sentences:", sentences);
+    console.log("📌 Extracted Categories:", categories);
+
+    if (sentences.length === 0 || categories.length === 0 || sentences.length !== categories.length) {
+        console.log("❌ Could not extract or match sentence-category pairs.");
+        return;
+    }
+
+    // ✅ Replace only the sentence text in the original HTML (preserve formatting)
+    let updatedHTML = botMessage.innerHTML;
+
+    sentences.forEach((sentence, index) => {
+        const color = categoryColors[categories[index]] || "yellow";
+        const escaped = sentence.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(escaped, "g");
+
+        updatedHTML = updatedHTML.replace(
+            regex,
+            `<span class="highlight" style="background-color: transparent; transition: background-color 0.5s ease-in-out;">${sentence}</span>`
+        );
+    });
+
+    botMessage.innerHTML = updatedHTML;
+
+    // ✅ Add highlight color with delay
+    const highlights = botMessage.querySelectorAll(".highlight");
+
+    highlights.forEach((span, i) => {
+        setTimeout(() => {
+            span.style.backgroundColor = categoryColors[categories[i]] || "yellow";
+        }, i * 1000);
+    });
+
+    console.log("✅ Sentences highlighted with delay!");
+});
+
+
+
+//         let buttonContainer = highlightButton.closest(".paraphrase_buttons");
+//         console.log("🟡 Button container:", buttonContainer);
+
+//         if (buttonContainer) {
+
+//             // Use MutationObserver to detect dynamically added bot messages
+//             let chatArea = document.querySelector(".chat-area");
+
+//             let botMessage = chatArea.querySelector(".bot-message:last-of-type");
+
+//             if (botMessage) {
+
+//                 let extractedText = botMessage.innerText.trim();
+//                 console.log("📌 Extracted Bot Text (Using innerText):", extractedText);
+                
+
+
+//                let botTextOnly = botMessage.innerHTML.split('<div class="paraphrase_buttons')[0].trim();
+//                 let processedText = botTextOnly.replace(/\s+/g, ' ');  // Normalize spacing
+
+//                 console.log("📝 Cleaned Bot Message:", processedText);
+
+//                 // Define category keywords and their associated colors
+//                 let categoryColors = {
+//                     "First Party Collection/Use": "#FFDDC1", /* Peach */
+//                     "Third Party Sharing/Collection": "#D4E2D4", /* Mint Green */
+//                     "Other": "#F5E6CC", /* Light Sand */
+//                     "User Choice/Control": "#DDEBF7", /* Soft Blue */
+//                     "Do Not Track": "#E1D5E7", /* Lavender */
+//                     "International and Specific Audiences": "#FFE4E1", /* Misty Rose */
+//                     "Data Security": "#C9E4CA", /* Pastel Green */
+//                     "Policy Change": "#FAD2E1", /* Blush Pink */
+//                     "Data Retention": "#FAF3DD", /* Creamy Yellow */
+//                     "User Access, Edit and Deletion": "#D7E3FC" /* Sky Blue */
+//                 };
+
+//                 let sentencePattern = /Sentence:\s(.*?)(?=\sCategory:|$)/gs;
+//                 let categoryPattern = /Category:\s(.*?)(?=\sSentence:|$)/gs;
+
+//                 let sentences = [...processedText.matchAll(sentencePattern)].map(match => match[1].trim());
+//                 let categories = [...processedText.matchAll(categoryPattern)].map(match => match[1].trim());
+
+//                 console.log("📝 Extracted Sentences:", sentences);
+//                 console.log("📌 Extracted Categories:", categories);
+                
+
+//             if (sentences.length !== categories.length) {
+//                 console.log("❌ Sentence-Category mismatch, stopping highlight!");
+//                 return;
+//             }
+
+//             // Highlight existing text without removing it
+//             let innerHTML = botMessage.innerHTML;
+
+//             sentences.forEach((sentence, index) => {
+//                 let categoryColor = categoryColors[categories[index]] || "yellow"; // Default to yellow
+
+//                 // Use regex to find the sentence in the existing text and wrap it in a span
+//                 let regex = new RegExp(sentence.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "g"); // Escape special characters
+//                 innerHTML = innerHTML.replace(regex, `<span class="highlight" style="background-color: ${categoryColor}; transition: background-color 0.3s ease-in-out;">${sentence}</span>`);
+//             });
+
+//             botMessage.innerHTML = innerHTML;
+//             console.log("✅ Sentences highlighted successfully!");
+//         } else {
+//             console.log("❌ No bot message found!");
+//         }
+//     }
+// // }
+//         });;
+
+
+//         document.addEventListener("click", function (event) {
+//         let highlightButton = event.target.closest(".highlight-text");
+
+//         if (highlightButton) {
+//         console.log("🔵 Highlight button clicked!");
+
+//         // Locate the closest paraphrase buttons container
+//         let buttonContainer = highlightButton.closest(".paraphrase_buttons");
+//         console.log("🟡 Button container:", buttonContainer);
+
+//         if (buttonContainer) {
+
+//             // Use MutationObserver to detect dynamically added bot messages
+//             let chatArea = document.querySelector(".chat-area");
+
+//             let botMessage = chatArea.querySelector(".bot-message:last-of-type");
+
+//             if (botMessage) {
+
+//                 let extractedText = botMessage.innerText.trim();
+//                 console.log("📌 Extracted Bot Text (Using innerText):", extractedText);
+                
+
+
+//                let botTextOnly = botMessage.innerHTML.split('<div class="paraphrase_buttons')[0].trim();
+//                 let processedText = botTextOnly.replace(/\s+/g, ' ');  // Normalize spacing
+
+//                 console.log("📝 Cleaned Bot Message:", processedText);
+
+//                 // Define category keywords and their associated colors
+//                 let categoryColors = {
+//                     "First Party Collection/Use": "#FFDDC1", /* Peach */
+//                     "Third Party Sharing/Collection": "#D4E2D4", /* Mint Green */
+//                     "Other": "#F5E6CC", /* Light Sand */
+//                     "User Choice/Control": "#DDEBF7", /* Soft Blue */
+//                     "Do Not Track": "#E1D5E7", /* Lavender */
+//                     "International and Specific Audiences": "#FFE4E1", /* Misty Rose */
+//                     "Data Security": "#C9E4CA", /* Pastel Green */
+//                     "Policy Change": "#FAD2E1", /* Blush Pink */
+//                     "Data Retention": "#FAF3DD", /* Creamy Yellow */
+//                     "User Access, Edit and Deletion": "#D7E3FC" /* Sky Blue */
+//                 };
+
+//                 let sentencePattern = /Sentence:\s(.*?)(?=\sCategory:|$)/gs;
+//                 let categoryPattern = /Category:\s(.*?)(?=\sSentence:|$)/gs;
+
+//                 let sentences = [...processedText.matchAll(sentencePattern)].map(match => match[1].trim());
+//                 let categories = [...processedText.matchAll(categoryPattern)].map(match => match[1].trim());
+
+//                 console.log("📝 Extracted Sentences:", sentences);
+//                 console.log("📌 Extracted Categories:", categories);
+                
+
+//                 if (sentences.length !== categories.length) {
+//                     console.log("❌ Could not correctly map sentences to categories!");
+//                     return;
+//                 }            
+
+//             } else {
+//                 console.log("❌ No bot message found!");
+//             }
+//         } else {
+//             console.log("❌ No button container found!");
+//         }
+//     }
+// });
+
+// Use MutationObserver to detect dynamically added bot messages
+        let chatArea = document.querySelector(".chat-area");
+
+        const observer = new MutationObserver((mutationsList) => {
+            for (let mutation of mutationsList) {
+                if (mutation.type === "childList") {
+                    console.log("🆕 New bot message detected!");
+                }
+            }
+        });
+
+        observer.observe(chatArea, { childList: true, subtree: true });
+
+
+        document.getElementById("chat-messages").addEventListener("click", function(event) {
+        if (event.target.classList.contains("paraphrase")) {
+        let botMessage = event.target.closest(".bot-message");
+
+        if (botMessage) {
+            let clonedBotMessage = botMessage.cloneNode(true);
+            clonedBotMessage.querySelectorAll(".paraphrase_buttons").forEach(buttonDiv => buttonDiv.remove());
+            let privacy_policy_output_text = clonedBotMessage.innerText.trim();
+            let buttonClickedText = event.target.innerText.trim();
+
+            let botId = botMessage.dataset.botId || Date.now();
+            botMessage.dataset.botId = botId;
+
+            let existingMessage = document.querySelector(`.paraphrased-message[data-bot-id="${botId}"], .typing-message[data-bot-id="${botId}"]`);
+
+            if (existingMessage) {
+            existingMessage.classList.remove("typed"); 
+            void existingMessage.offsetWidth; 
+            existingMessage.classList.add("typed");
+
+            existingMessage.innerHTML = "Please wait while the text is being paraphrased <span class='typing'></span> <span class='typing'></span> <span class='typing'></span>";
+            existingMessage.classList.add("typing-message");
+            existingMessage.classList.remove("paraphrased-message");
+            existingMessage.style.backgroundColor = "#C7E9DA";
+
+            console.log("Existing message:", existingMessage.className);
+        }
+
+            else {
+                let typingMessage = document.createElement("div");
+                typingMessage.className = "chat-bubble bot-message typing-message typed";
+                typingMessage.innerHTML = "Please wait while the text is being paraphrased <span class='typing'></span> <span  class='typing'></span> <span  class='typing'> </span>";
+                typingMessage.style.backgroundColor = "#C7E9DA";
+                typingMessage.dataset.botId = botId;
+
+                botMessage.insertAdjacentElement("afterend", typingMessage);
+                console.log("Typing",typingMessage.className)
+            }
+
+            chatSocket.send(JSON.stringify({
+                "privacy_policy_output_text": privacy_policy_output_text,
+                "button_clicked": buttonClickedText
+            }));
+        }
+    }
+});
+
+        form.addEventListener("submit",(e)=>{
+            e.preventDefault();
+            var model_name = document.getElementById("model_name").value
+            let privacy_policy_input_text = e.target.message.value
+            let userMessage = document.createElement("div");
+            userMessage.className = "chat-bubble user-message";
+            userMessage.textContent = privacy_policy_input_text;
+            pp_paraphrase_input = privacy_policy_input_text
+            chatMessages.appendChild(userMessage);
+            
+            let typingMessage = document.createElement("div");
+            typingMessage.className = "chat-bubble bot-message typed";
+            typingMessage.innerHTML = "Please wait while the model performs classification <span class='typing'></span> <span  class='typing'></span> <span  class='typing'> </span>"
+            typingMessage.id = "typing-indicator";
+            chatMessages.appendChild(typingMessage);           
+            chatSocket.send(JSON.stringify({
+                "privacy_policy_input_text":privacy_policy_input_text,
+                "model_name":model_name
+            }),
+            ) 
+            form.reset()
+        });
+
+        chatSocket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    if (data.message_from_server) {
+        let botMessage = document.createElement("div");
+        botMessage.className = "chat-bubble bot-message typed";  // Ensure animation applies
+
+        let typingIndicator = document.getElementById("typing-indicator");
+        if (typingIndicator) typingIndicator.remove();
+
+        // botMessage.textContent = data.message_from_server;
+        // console.log(botMessage)
+        const responseText = data.message_from_server;
+
+
+        // Extract sentences and categories from raw text before adding <strong> tags
+        let sentencePattern = /Sentence:\s(.*?)(?=\sCategory:|$)/gs;
+        let categoryPattern = /Category:\s(.*?)(?=\sSentence:|$)/gs;
+
+        let sentences = [...responseText.matchAll(sentencePattern)].map(m => m[1].trim());
+        let categories = [...responseText.matchAll(categoryPattern)].map(m => m[1].trim());
+
+        console.log("📝 Extracted Sentences:", sentences);
+        console.log("📌 Extracted Categories:", categories);
+
+        let formattedHTML = '';
+        for (let i = 0; i < sentences.length; i++) {
+            formattedHTML += `<strong>Sentence:</strong> ${sentences[i]} <strong>Category:</strong> ${categories[i]}<br>`;
+        }
+
+        botMessage.innerHTML = formattedHTML;
+
+
+        let originalButtons = document.querySelector(".paraphrase_buttons");
+        let clonedButtons = originalButtons.cloneNode(true);
+        clonedButtons.style.display = "flex"; 
+
+        botMessage.appendChild(clonedButtons);
+        chatMessages.appendChild(botMessage);
+    }
+
+    if (data.paraphrased_content) {
+        // Identify the bot message where the paraphrase request was triggered
+        let lastBotMessage = document.querySelector(".chat-bubble.bot-message.typing-message");
+
+        if (lastBotMessage) {
+            let botId = lastBotMessage.dataset.botId;
+
+            // Replace the "Please wait..." message with the paraphrased content
+            lastBotMessage.classList.remove("typing-message");
+            lastBotMessage.classList.add("paraphrased-message");
+            lastBotMessage.innerHTML = data.paraphrased_content;
+        } else {
+            console.log("❌ No matching 'Please wait...' message found!");
+        }
+    }
+    // if (data.paraphrased_content) {
+    //     let lastBotMessage = document.querySelector(".chat-bubble.bot-message:last-of-type");
+
+    //     if (lastBotMessage) {
+    //         let botId = lastBotMessage.dataset.botId;
+    //         let typingIndicator = document.querySelector(`.typing-message[data-bot-id="${botId}"]`);
+
+    //         if (typingIndicator) {
+    //             typingIndicator.classList.remove("typed");
+    //             void typingIndicator.offsetWidth; 
+    //             typingIndicator.classList.add("typed");
+
+    //             typingIndicator.innerHTML = data.paraphrased_content;
+    //             typingIndicator.classList.remove("typing-message");
+    //             typingIndicator.classList.add("paraphrased-message");
+                
+    //         } else {
+    //             let existingParaphrasedMessage = document.querySelector(`.paraphrased-message[data-bot-id="${botId}"]`);
+    //             console.log(existingParaphrasedMessage)
+
+    //             if (existingParaphrasedMessage) {
+    //                 existingParaphrasedMessage.classList.remove("typed");
+    //                 void existingParaphrasedMessage.offsetWidth; 
+    //                 existingParaphrasedMessage.classList.add("typed");
+    //                 existingParaphrasedMessage.innerHTML = data.paraphrased_content;
+    //             } else {
+    //                 let paraphrasedMessage = document.createElement("div");
+    //                 paraphrasedMessage.className = "chat-bubble bot-message paraphrased-message typed";
+    //                 paraphrasedMessage.innerHTML = data.paraphrased_content;
+    //                 paraphrasedMessage.dataset.botId = botId;
+
+    //                 lastBotMessage.insertAdjacentElement("afterend", paraphrasedMessage);
+    //             }
+    //         }
+    //     }
+    // }
+};
+
+</script>
 </body>
 </html>
